@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>    
+    <UserSecretsId>e7603fea-6e38-4309-8221-00714b8f8bbf</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>    
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />        
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />        
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />    
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />    
+    <PackageReference Include="Serilog.Enrichers.Environment" />    
+    <PackageReference Include="Serilog.Enrichers.Process" />    
+    <PackageReference Include="Serilog.Enrichers.Thread" />    
+    <PackageReference Include="Serilog.Formatting.Compact" />    
+    <PackageReference Include="Serilog.Settings.Configuration" />    
+    <PackageReference Include="Serilog.Sinks.Console" />    
+    <PackageReference Include="Swashbuckle.AspNetCore" />            
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlavourVault.Audit.Contracts\FlavourVault.Audit.Contracts.csproj" />
+    <ProjectReference Include="..\FlavourVault.Audit\FlavourVault.Audit.csproj" />
+    <ProjectReference Include="..\FlavourVault.Recipes.Contracts\FlavourVault.Recipes.Contracts.csproj" />
+    <ProjectReference Include="..\FlavourVault.Recipes\FlavourVault.Recipes.csproj" />
+    <ProjectReference Include="..\FlavourVault.SharedCore\FlavourVault.SharedCore.csproj" />
+    <ProjectReference Include="..\FlavourVault.Security.Contracts\FlavourVault.Security.Contracts.csproj" />
+    <ProjectReference Include="..\FlavourVault.Security\FlavourVault.Security.csproj" />
+  </ItemGroup>
+
+</Project>

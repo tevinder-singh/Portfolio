@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCEBD392-2D4B-402B-AC87-A3AAD67089CA}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlavourVault.Web", "FlavourVault.Web\FlavourVault.Web.csproj", "{B6A169FB-9B9A-407F-8460-8DA2E9CAED4E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6A169FB-9B9A-407F-8460-8DA2E9CAED4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A169FB-9B9A-407F-8460-8DA2E9CAED4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A169FB-9B9A-407F-8460-8DA2E9CAED4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A169FB-9B9A-407F-8460-8DA2E9CAED4E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

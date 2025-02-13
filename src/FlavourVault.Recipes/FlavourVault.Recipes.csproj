@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>    
+    <ImplicitUsings>enable</ImplicitUsings>    
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlavourVault.Recipes.Contracts\FlavourVault.Recipes.Contracts.csproj" />
+    <ProjectReference Include="..\FlavourVault.SharedCore\FlavourVault.SharedCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Integrations\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+@FlavourVault.Audit_HostAddress = http://localhost:5239
+
+GET {{FlavourVault.Audit_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
