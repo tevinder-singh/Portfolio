@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FlavourVault.SharedCore.Contracts;
 using FlavourVault.SharedCore.Domain.Common;
+using FlavourVault.SharedCore.Domain.DomainEvents;
 
 namespace FlavourVault.Audit.Domain.AuditTrail;
 internal sealed class AuditTrail: AggregateRoot
@@ -27,7 +27,7 @@ internal sealed class AuditTrail: AggregateRoot
 
     public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 
-    public string? RecordId { get; set; }
+    public Guid? RecordId { get; set; }
 
     public ICollection<AuditTrailChangeValue>? ChangedValues { get; private set; } = [];
 }

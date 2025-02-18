@@ -1,4 +1,4 @@
-﻿using FlavourVault.SharedCore.Contracts;
+﻿using FlavourVault.SharedCore.Domain.DomainEvents;
 using MediatR;
 
 namespace FlavourVault.Audit.Integrations;
@@ -7,6 +7,6 @@ internal sealed class AuditTrailNotificationHandler : INotificationHandler<Audit
 {
     public async Task Handle(AuditTrailNotification notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        //throw new Exception("Audit Error");
     }
 }

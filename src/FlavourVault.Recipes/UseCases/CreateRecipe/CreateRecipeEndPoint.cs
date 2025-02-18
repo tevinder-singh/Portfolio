@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using FlavourVault.Recipes.Contracts;
-using FlavourVault.SharedCore.Interfaces;
-using FlavourVault.SharedCore.RequestValidations;
-using FlavourVault.SharedCore.Results;
-using MediatR;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace FlavourVault.Recipes.UseCases.CreateRecipe;
 
@@ -13,17 +8,18 @@ internal sealed class CreateRecipeEndPoint : IMinimalApiEndpoint
     [ExcludeFromCodeCoverage]
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("recipes", Handle)
-            .WithSummary("Add new recipe")
+        app.MapPost("recipes", Handle)            
             .WithRequestValidation<CreateRecipeRequest>()
-            .Produces<Guid>()
+            .Produces<Guid>((int)HttpStatusCode.Created)
+            .WithDescription("Create Recipe")
+            .WithSummary("Create Recipe")
+            .WithTags("Recipies")
             .AllowAnonymous();
     }
 
-    public static async Task<IResult> Handle(CreateRecipeRequest request, IMediator mediator, IMapper mapper, CancellationToken cancellationToken)
+    public static async Task<IResult> Handle(CreateRecipeRequest request, IMediator mediator, CancellationToken cancellationToken)
     {
-        var command = mapper.Map<CreateRecipeCommand>(request);
-        Result<Guid> result = await mediator.Send(command, cancellationToken);
+        Result<Guid> result = await mediator.Send(request, cancellationToken);
         return result.ToApiResult();
     }
 }

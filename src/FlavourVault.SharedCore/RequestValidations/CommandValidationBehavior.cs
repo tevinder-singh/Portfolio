@@ -1,4 +1,4 @@
-﻿using FlavourVault.SharedCore.Results;
+﻿using FlavourVault.Results;
 using FluentValidation;
 using MediatR;
 
@@ -34,13 +34,12 @@ public sealed class CommandValidationBehavior<TRequest, TResponse> :
         if (typeof(TResponse).IsGenericType && typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
         {
             var resultType = typeof(TResponse).GetGenericArguments()[0];
-            var invalidMethod = typeof(Result<>)
-                .MakeGenericType(resultType)
-                .GetMethod(nameof(Result<int>.Invalid), new[] { typeof(List<ResultError>) });
-
-            if (invalidMethod != null)
+            var method = typeof(Result).GetMethod("ValidationFailure");
+            if (method != null)
             {
-                return (TResponse)invalidMethod.Invoke(null, new object[] { failures });
+                var genericMethod = method.MakeGenericMethod(resultType);
+                if (genericMethod != null)
+                    return (TResponse)genericMethod.Invoke(null, [failures]);
             }
         }
         else if (typeof(TResponse) == typeof(Result))

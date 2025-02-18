@@ -1,9 +1,7 @@
-﻿using FlavourVault.Recipes.BackgroundServices;
-using FlavourVault.Recipes.Contracts;
-using FlavourVault.Recipes.Data;
-using FlavourVault.Recipes.Data.Repositories;
-using FlavourVault.SharedCore.Data;
+﻿using FlavourVault.OutboxDispatcher;
 using FlavourVault.SharedCore.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlavourVault.Recipes;
 
@@ -17,14 +15,13 @@ public static class RecipesDomainServiceExtensions
 
         // Add services to the container.        
         services.AddDatabaseContext<RecipesDbContext>(config, RecipesDbContext.SchemaName);
-                
-        services.AddScoped<IRecipiesUnitOfWork, RecipiesUnitOfWork>();        
-        //services.AddScoped<IOutboxRepository<RecipesDbContext>, OutboxRepository<RecipesDbContext>>();
-        services.AddScoped<IRecipesRepository, RecipesRepository>();        
-        services.AddSingleton<IOutboxProcessor, OutboxProcessor>();
+        services.AddDatabaseContext<RecipesOutboxDbContext>(config, RecipesDbContext.SchemaName);
 
+        services.AddScoped<IRecipiesUnitOfWork, RecipiesUnitOfWork>();                
+        services.AddScoped<IRecipesRepository, RecipesRepository>();        
+        
         //backgroud service to send messages async
-        services.AddHostedService<OutboxBackgroundService>();
+        services.AddHostedService<OutboxDispatcherService<RecipesOutboxDbContext>>();
 
         assemblies.Add(typeof(RecipesDomainServiceExtensions).Assembly);
         assemblies.Add(typeof(CreateRecipeRequest).Assembly);

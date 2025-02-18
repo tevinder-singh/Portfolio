@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using FlavourVault.SharedCore.Contracts;
+using FlavourVault.SharedCore.Domain.DomainEvents;
 
 namespace FlavourVault.Audit.Data.EntitiesConfiguration;
 
@@ -17,8 +17,7 @@ internal class AuditTrailConfiguration : IEntityTypeConfiguration<AuditTrail>
         builder.HasIndex(e => new { e.RecordId, e.Area, e.Category });
         builder.Property(e => e.UserName).HasMaxLength(100).IsRequired();
         builder.Property(e => e.Area).HasMaxLength(200).IsRequired();
-        builder.Property(e => e.Category).HasMaxLength(200).IsRequired();
-        builder.Property(e => e.RecordId).HasMaxLength(32);
+        builder.Property(e => e.Category).HasMaxLength(200).IsRequired();        
         builder.Property(e => e.CreatedOn).IsRequired();
         builder.Property(e => e.Action).HasMaxLength(200).IsRequired();
         builder.Property(e => e.ActionKey).HasMaxLength(200).IsRequired();

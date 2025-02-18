@@ -1,29 +1,23 @@
-﻿using FlavourVault.Recipes.Data;
-using FlavourVault.Recipes.Data.Repositories;
-using FlavourVault.Recipes.Domain.Recipe;
-using FlavourVault.SharedCore.Results;
-using MediatR;
+﻿using FlavourVault.Recipes.Domain.Recipe;
 
 namespace FlavourVault.Recipes.UseCases.CreateRecipe;
 
-internal sealed class CreateRecipeCommandHandler(
-        ILogger<CreateRecipeCommandHandler> logger,
+internal sealed class CreateRecipeCommandHandler(        
         IRecipesRepository recipesRepository,
         IRecipiesUnitOfWork unitOfWork
-    ) : IRequestHandler<CreateRecipeCommand, Result<Guid>>
+    ) : IRequestHandler<CreateRecipeRequest, Result<Guid>>
 {
-    public async Task<Result<Guid>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateRecipeRequest request, CancellationToken cancellationToken)
     {
-        var recipe = new Recipe
-        {
-            Name = request.Name,
-            Description = request.Description,
-        };
+        var result = Recipe.From(request);
+        if (!result.IsSuccess)
+            return Result.Invalid<Guid>(result.Errors);
 
+        var recipe = result.Value;
         recipesRepository.AddRecipe(recipe);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result<Guid>.Created(recipe.Id);
+        return Result.Created(recipe.Id);
     }
 }

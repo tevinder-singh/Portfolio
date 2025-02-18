@@ -10,12 +10,8 @@ using FlavourVault.SharedCore.Interfaces;
 
 namespace FlavourVault.Security.Data;
 
-internal sealed class SecurityDbContext : DbContextBase
+internal sealed class SecurityDbContext(DbContextOptions<SecurityDbContext> dbContextOptions, IUserContext userContext) : DbContextBase(dbContextOptions,userContext, SchemaName)
 {
-    public SecurityDbContext(DbContextOptions<SecurityDbContext> dbContextOptions, IUserContext userContext) : base(dbContextOptions,userContext, SchemaName)
-    {            
-    }
-
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }

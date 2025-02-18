@@ -1,5 +1,5 @@
-﻿using FlavourVault.SharedCore.Contracts;
-using FlavourVault.SharedCore.Domain.Common;
+﻿using FlavourVault.SharedCore.Domain.Common;
+using FlavourVault.SharedCore.Domain.DomainEvents;
 using FlavourVault.SharedCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -12,7 +12,7 @@ public abstract class DbContextBase : DbContext
     private readonly IUserContext _userContext;
     private readonly string _schemaName;
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-
+    private static readonly string[] IgnoredProperties = ["Password", "CreatedBy", "CreatedOn", "ModifiedOn", "ModifiedBy"];
 
     protected DbContextBase(DbContextOptions dbContextOptions, IUserContext userContext, string schemaName) : base(dbContextOptions)
     {
@@ -37,11 +37,37 @@ public abstract class DbContextBase : DbContext
 
         SetAuditableProperties(userId);
         await CreateAuditTrailNotifications(userName, cancellationToken);
-        
+        await CreateDomainEventNotifications(cancellationToken);
+
         return await base.SaveChangesAsync(cancellationToken);
     }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
+
+    #region domain events
+
+    private async Task CreateDomainEventNotifications(CancellationToken cancellationToken = default)
+    {
+        var domainEvents = ChangeTracker.Entries<IHasDomainEvent>()
+            .Select(e => e.Entity.DomainEvents)
+            .SelectMany(e => e)
+            .Where(domainEvent => !domainEvent.IsPublished)
+            .ToArray();
+
+        foreach (var item in domainEvents)
+        {
+            var outboxMessage = new OutboxMessage
+            (
+                item.GetType().FullName,
+                item.GetType().Name,
+                JsonSerializer.Serialize(item, _jsonSerializerOptions)
+            );
+            await AddAsync(outboxMessage, cancellationToken);
+            item.IsPublished = true;
+        }
+    }
+
+    #endregion
 
     #region auditing
 
@@ -57,6 +83,8 @@ public abstract class DbContextBase : DbContext
                     break;
 
                 case EntityState.Modified:
+                    ResetIsModifiedFlag(entry, "CreatedOn");
+                    ResetIsModifiedFlag(entry, "CreatedBy");
                     entry.Entity.ModifiedOn = DateTime.UtcNow;
                     entry.Entity.ModifiedBy = userId;
                     break;
@@ -84,8 +112,8 @@ public abstract class DbContextBase : DbContext
     }
 
     private AuditTrailNotification CreateTrailEntry(string username, EntityEntry<IAuditableEntity> entry)
-    {
-        var auditTrail = new AuditTrailNotification(username, GetAction(entry), GetActionKey(entry), _schemaName, entry.Entity.GetType().Name);
+    {        
+        var auditTrail = new AuditTrailNotification(username, GetAction(entry), GetActionKey(entry), _schemaName, entry.Entity.GetType().Name, entry.Entity.Id);
 
         SetAuditTrailPropertyValues(entry, auditTrail);        
         return auditTrail;
@@ -114,20 +142,14 @@ public abstract class DbContextBase : DbContext
     }
 
     private static void SetAuditTrailPropertyValues(EntityEntry entry, AuditTrailNotification trailEntry)
-    {
+    {        
         foreach (var property in entry.Properties.Where(x => !x.IsTemporary))
         {
             if (property.Metadata.IsPrimaryKey())
-            {
-                trailEntry.RecordId = property.CurrentValue?.ToString();
-                if (entry.State == EntityState.Deleted || entry.State == EntityState.Added)
-                    return;
-
-                continue;
-            }
+                continue;            
 
             // Filter properties that should not appear in the audit list
-            if (property.Metadata.Name.Contains("Password"))            
+            if (IgnoredProperties.Contains(property.Metadata.Name))            
                 continue;            
 
             SetAuditTrailPropertyValue(entry, trailEntry, property);
@@ -149,5 +171,14 @@ public abstract class DbContextBase : DbContext
         }
     }
 
+    private static void ResetIsModifiedFlag(EntityEntry entry, string propertyName)
+    {
+        var propertyEntry = entry.Properties.FirstOrDefault(x => x.Metadata.Name == propertyName);
+        if (propertyEntry != null)
+            propertyEntry.IsModified = false;
+    }
+
     #endregion
+
+
 }

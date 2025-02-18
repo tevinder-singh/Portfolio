@@ -1,12 +1,6 @@
-﻿using FlavourVault.SharedCore.Data;
-using FlavourVault.SharedCore.Results;
-using FlavourVault.Security.Contracts;
-using FlavourVault.Security.Data.Repositories;
-using MediatR;
+﻿namespace FlavourVault.Security.UseCases.AuthenticateUser;
 
-namespace FlavourVault.Security.UseCases.AuthenticateUser;
-
-internal sealed class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand, Result<AuthenticateUserResponse>>
+internal sealed class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserRequest, Result<AuthenticateUserResponse>>
 {
     private readonly ILogger<AuthenticateUserCommandHandler> _logger;
     private readonly IUsersRepository usersRepository;
@@ -17,7 +11,7 @@ internal sealed class AuthenticateUserCommandHandler : IRequestHandler<Authentic
         this.usersRepository = usersRepository;
     }
 
-    public async Task<Result<AuthenticateUserResponse>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticateUserResponse>> Handle(AuthenticateUserRequest request, CancellationToken cancellationToken)
     {
         //var user = usersRepository.GetByIdAsync(request.Email);
 
@@ -30,7 +24,7 @@ internal sealed class AuthenticateUserCommandHandler : IRequestHandler<Authentic
         //if (!validationResult.IsValid)
         //    return Result<AuthenticateUserResponse>.Invalid(validationResult.ToDictionary());
 
-        return Result<AuthenticateUserResponse>.Unauthorized();
+        return Result.Unauthorized<AuthenticateUserResponse>();
         //var user = await _userRepository.GetUserWithCartByEmailAsync(request.EmailAddress);
 
         //if (user is null)

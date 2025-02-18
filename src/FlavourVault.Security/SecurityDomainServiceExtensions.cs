@@ -1,8 +1,6 @@
-﻿using FlavourVault.Security.Contracts;
-using FlavourVault.Security.Data;
-using FlavourVault.Security.Data.Repositories;
-using FlavourVault.SharedCore.Data;
-using FlavourVault.SharedCore.Extensions;
+﻿using FlavourVault.SharedCore.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlavourVault.Security;
 

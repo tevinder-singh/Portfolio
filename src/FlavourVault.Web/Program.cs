@@ -1,10 +1,15 @@
 using Asp.Versioning;
 using Asp.Versioning.Builder;
+using FlavourVault.OutboxDispatcher;
+using FlavourVault.OutboxDispatcher.Dispatchers;
+using FlavourVault.OutboxDispatcher.Interfaces;
 using FlavourVault.Recipes;
+using FlavourVault.Security;
+using FlavourVault.SharedCore.Domain.Common;
 using FlavourVault.SharedCore.Extensions;
+using FlavourVault.SharedCore.Interfaces;
 using FlavourVault.SharedCore.Middleware;
 using FlavourVault.SharedCore.RequestValidations;
-using FlavourVault.Security;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,8 +22,9 @@ using Serilog;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using FlavourVault.SharedCore.Interfaces;
-using FlavourVault.SharedCore.Domain.Common;
+using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +75,29 @@ services.AddApiVersioning(options =>
     options.GroupNameFormat = "'v'VVV";
     options.SubstituteApiVersionInUrl = true;
 });
+
+//Azure Service Bus
+services.AddAzureClients(azureBuilder =>
+{
+    var topics = builder.Configuration["MessageBus:Topics"];
+    azureBuilder.AddServiceBusClient(builder.Configuration.GetConnectionString("AzureServiceBusConnectionString"));
+    if (topics != null)
+    { 
+        foreach (var topic in topics.Split(','))
+        {
+            azureBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+                provider.GetService<ServiceBusClient>().CreateSender(topic!)
+            )
+            .WithName(topic);
+        }
+    }
+});
+
+
+//outbox services
+builder.Services.ConfigureOptions<ResilienceOptionsSetup>();
+services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
+services.AddSingleton<IMessageBusDispatcher, AzureServiceBusDispatcher>();
 
 //register domain specific services
 services.AddRecipesDomainServices(builder.Configuration, assemblies);

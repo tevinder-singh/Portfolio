@@ -5,6 +5,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DbConnectionString=${DB_ConnectionString}
+      - ConnectionStrings__AzureServiceBusConnectionString=${ASB_ConnectionString}
+      - MessageBus__Topics=EmailMessage
     ports:
       - 5000:8080
       - 5001:8081 

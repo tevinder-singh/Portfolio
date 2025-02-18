@@ -1,14 +1,7 @@
-﻿using FluentValidation;
+﻿namespace FlavourVault.Recipes.Contracts;
 
-namespace FlavourVault.Recipes.Contracts;
+public sealed record CreateRecipeRequest(string Name, string Description) : RecipeRequest(Name, Description), IRequest<Result<Guid>>;
 
-public record CreateRecipeRequest(string Name, string Description);
-
-public class CreateRecipeRequestValidator : AbstractValidator<CreateRecipeRequest>
+public sealed class CreateRecipeRequestValidator : RecipeRequestValidator<CreateRecipeRequest>
 {
-    public CreateRecipeRequestValidator()
-    {
-        RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Description).NotEmpty();
-    }
 }
