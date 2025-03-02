@@ -1,24 +1,13 @@
-Loosely coupled modular monolith application
+Sample application show casing both Modular Monolith and Microservie architecture
+
+Domains are loosley coupled with own schema and process changes from other domains using event model
 
 Communication done through MediatR
 
-Outbox Pattern is used for sending messages and events
+Outbox Pattern is used for sending messages and domain events
 
-# EF Core Migration Scripts
+# Outbox Dispatcher Service
+Outbox dispatcher service written to process both messages to external services using Azure service bus or RabbitMQ and also send internal domain events
 
-dotnet ef --project FlavourVault.Recipes --startup-project FlavourVault.Web migrations add Initial --context RecipesDbContext
-dotnet ef --project FlavourVault.Recipes --startup-project FlavourVault.Web database update --context RecipesDbContext
-
-dotnet ef --project FlavourVault.Security --startup-project FlavourVault.Web migrations add Initial --context SecurityDbContext
-dotnet ef --project FlavourVault.Security --startup-project FlavourVault.Web database update --context SecurityDbContext
-
-dotnet ef --project FlavourVault.Audit --startup-project FlavourVault.Web migrations add Initial --context AuditDbContext
-dotnet ef --project FlavourVault.Audit --startup-project FlavourVault.Web database update --context AuditDbContext
-
-# Store Connections strings in user secrets for local debugging
- dotnet user-secrets set "ConnectionStrings:DbConnectionString" "CONNECTION_STRING"
- dotnet user-secrets set "ConnectionStrings:AzureServiceBusConnectionString" "CONNECTION_STRING"
-
-# Add .env file in docker compose to store
-DB_PASSWORD=
-DB_ConnectionString=
+# Notification Service
+This service look for messages (Email, SMS) in RabbitMQ or Azure Service Bus and process them
