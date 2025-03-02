@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" />
+    <PackageReference Include="RabbitMQ.Client" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlavourVault.Notification.Contracts\FlavourVault.Notification.Contracts.csproj" />
+    <ProjectReference Include="..\FlavourVault.Results\FlavourVault.Results.csproj" />
+    <ProjectReference Include="..\FlavourVault.SharedCore\FlavourVault.SharedCore.csproj" />
+  </ItemGroup>
+
+</Project>
